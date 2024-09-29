@@ -1,0 +1,89 @@
+head(cpue_cod_sf)
+head(pr_cod_sf)
+Density_cod <- cpue_cod_sf
+
+#Dsp,t,i = PRsp,t,i * e^(CPUEsp,t,i) e.g., Atlantic cod (Repeat for all spp.)
+Density_cod$density11=(pr_cod_sf$response.11)*(exp(cpue_cod_sf$response.11))
+Density_cod$density12=(pr_cod_sf$response.12)*(exp(cpue_cod_sf$response.12))
+Density_cod$density13=(pr_cod_sf$response.13)*(exp(cpue_cod_sf$response.13))
+Density_cod$density14=(pr_cod_sf$response.14)*(exp(cpue_cod_sf$response.14))
+Density_cod$density15=(pr_cod_sf$response.15)*(exp(cpue_cod_sf$response.15))
+Density_cod$density16=(pr_cod_sf$response.16)*(exp(cpue_cod_sf$response.16))
+Density_cod$density17=(pr_cod_sf$response.17)*(exp(cpue_cod_sf$response.17))
+Density_cod$density18=(pr_cod_sf$response.18)*(exp(cpue_cod_sf$response.18))
+Density_cod$density19=(pr_cod_sf$response.19)*(exp(cpue_cod_sf$response.19))
+Density_cod$density20=(pr_cod_sf$response.20)*(exp(cpue_cod_sf$response.20))
+
+#Mean density estimates (Atl. cod)
+
+x=subset(Density_cod, select=(c(density11,density12,density13,
+                                density14,density15,density16,
+                                density17,density18,density19,
+                                density20)))
+x$Mean.Density=rowMeans(x %>% st_drop_geometry())
+Density_cod=st_join(Density_cod, x)
+head(Density_cod)
+
+Density_cod$Log.Mean.Density <- log(Density_cod$Mean.Density)
+
+#Highlighting important habitat e.g., Atl.cod - 
+n = nrow(Density_cod)*0.1 #Select 10% of rows from species of interest
+
+Density_cod.10 <- Density_cod[order(-Density_cod$Mean.Density),]#decending order
+head(Density_cod.10)
+Density_cod.10 <- Density_cod.10[1:n,] #Subset for top 10%
+Density_cod.10 <- st_union(Density_cod.10) #Form polygons from sf values
+
+#Plot for each species of interest
+Dens_plaice <- ggplot(atl_coast) +
+  geom_sf() +
+  theme_classic() + 
+  geom_sf(data=Density_plaice, aes(fill=Log.Mean.Density), color=NA) +
+  geom_sf(data = Density_plaice.10, color='red', linewidth=0.5, fill=NA) + 
+  scale_fill_viridis(option = "mako") +
+  labs(y='lat', fill="Kg/Trawl")+
+  geom_sf(data=bras_d, fill='white') + annotation_scale(width_hint=0.1)
+Dens_plaice
+
+Dens_cod <- ggplot(atl_coast) +
+  geom_sf() +
+  theme_classic() + 
+  geom_sf(data=DensityCod, aes(fill=Log.Mean.Density), color=NA) +
+  geom_sf(data = Density_cod.10, color='red', linewidth=0.5, fill=NA) + 
+  scale_fill_viridis(option = "mako") +
+  labs(y='lat', fill="Kg/Trawl")+
+  geom_sf(data=bras_d, fill='white')+ annotation_scale(width_hint=0.1)
+Dens_cod
+
+Dens_hake <- ggplot(atl_coast) +
+  geom_sf() +
+  theme_classic() + 
+  geom_sf(data=Density_hake, aes(fill=Mean.Density), color=NA) +
+  geom_sf(data = Density_hake.10, color='red', linewidth=0.5, fill=NA) + 
+  scale_fill_viridis(option = "mako") +
+  labs(y='lat', x='lon', fill="Kg/Trawl")+
+  geom_sf(data=bras_d, fill='white')+ annotation_scale(width_hint=0.1)
+Dens_hake
+
+Dens_had <- ggplot(atl_coast) +
+  geom_sf() +
+  theme_classic() + 
+  geom_sf(data=Density_had, aes(fill=Mean.Density), color=NA) +
+  geom_sf(data = Density_had.10, color='red', linewidth=0.5, fill=NA) + 
+  scale_fill_viridis(option = "mako") +
+  labs(fill="Kg/Trawl")+
+  geom_sf(data=bras_d, fill='white')+ annotation_scale(width_hint=0.1)
+Dens_had
+
+Dens_pol <- ggplot(atl_coast) +
+  geom_sf() +
+  theme_classic() + 
+  geom_sf(data=Density_pol, aes(fill=Mean.Density), color=NA) +
+  geom_sf(data = Density_pol.10, color='red', linewidth=0.5, fill=NA) + 
+  scale_fill_viridis(option = "mako") +
+  labs(x='lon', fill="Kg/Trawl")+
+  geom_sf(data=bras_d, fill='white')+ annotation_scale(width_hint=0.1)
+Dens_pol
+
+grid.arrange(Dens_plaice, Dens_had, Dens_cod, Dens_pol, Dens_hake, ncol=2)
+
