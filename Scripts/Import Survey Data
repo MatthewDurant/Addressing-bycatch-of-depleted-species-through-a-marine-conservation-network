@@ -1,0 +1,35 @@
+####IMPORT SURVEY DATA - FIGURE 1####
+#source <- https://open.canada.ca/data/en/dataset/1366e1f1-e2c8-4905-89ae-e10f1be0a164
+GSDET <- read.csv("/Users/matthewdurant/Downloads/SUMMER_csv/SUMMER_2023_GSDET.csv")
+RV1120 <- subset(GSDET, year>=2011 & year<=2020)
+RV1120_sf <- st_as_sf(RV1120, coords = c("longitude", "latitude"), crs=st_crs(atl_coast), remove=F)
+
+#bycatch species
+rv_cod <- subset(RV1120_sf, species=="Atlantic cod")
+rv_plaice <- subset(RV1120_sf, species=="American plaice")
+rv_hake <- subset(RV1120_sf, species=="White Hake")
+
+#target species
+rv_haddock <- subset(RV1120_sf, species=="Haddock")
+rv_pol <- subset(RV1120_sf, species=="Pollock")
+
+#Avg CPUE per tow per species
+cod_cpue <- aggregate(rv_cod$totwgt, list(rv_cod$year), FUN=mean) 
+colnames(cod_cpue) <- c("year","cpue")
+
+regions <- tibble(x1 = 2011, x2 = 2020, y1 = -Inf, y2 = +Inf)
+
+#Repeat for all spp.
+cod_ggplot <- ggplot(data=cod_cpue, aes(x=year, y=(2*cpue))) +
+  geom_line(linetype=2) + labs(subtitle = "Atlantic cod") +
+  geom_point() +
+  labs(x="", y="") +
+  theme_classic() + 
+  geom_rect(data = regions,
+            inherit.aes = FALSE,
+            mapping = aes(xmin = x1, xmax = x2,
+                          ymin = y1, ymax = y2),
+            color = "transparent",
+            fill = "red",
+            alpha = .2)
+cod_ggplot  
