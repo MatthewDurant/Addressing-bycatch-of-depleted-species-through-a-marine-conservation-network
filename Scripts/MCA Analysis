@@ -1,0 +1,240 @@
+####MCA ANALYSIS - Figure 6####
+mca=mymap
+mca_fit <- st_intersection(bv_cod, mca)
+
+high_bycatch_cod <- st_intersection(high_bv_cod_0.1, mca)
+unique(high_bycatch_cod$NAME)
+mca_cod <- subset(mca_fit, mca_fit$NAME=="St Anns Bank Marine Protected Area"|
+                    mca_fit$NAME=="Eastern Shoal"|
+                    mca_fit$NAME=="Georges Bank"|
+                    mca_fit$NAME=="Fundian Channel-Browns Bank"|
+                    mca_fit$NAME=="Brier Island"|
+                    mca_fit$NAME=="Eastern Canyons Marine Refuge"|
+                    mca_fit$NAME=="South Grand Manan")
+head(mca_cod)
+#Calculate Area
+high_bv_cod_total <- st_area(high_bv_cod_0.1) #Total area (top x%)
+high_bv_cod_total <- sum(high_bv_cod_total)
+
+#Total area of high BR inside MCA's
+bv_cod_mca = sum(st_area(high_bycatch_cod))
+
+cod_area_mca <- st_area(mca_cod) #Total area within MCA
+cod_area_mca = sum(cod_area_mca)
+
+sf_use_s2(FALSE)
+high_bv_mpa <- sum(st_area(subset(high_bycatch_cod, TYPE=="MPA")))
+high_bv_oem <- sum(st_area(subset(high_bycatch_cod, TYPE=="OEM")))
+high_bv_tbd <- sum(st_area(subset(high_bycatch_cod, TYPE=="TBD"| TYPE=="AOI")))
+
+t_mpa <- subset(mca_cod, TYPE=='MPA')
+t_oecm <- subset(mca_cod, TYPE=='OEM')
+t_draft <- subset(mca_cod, TYPE=='TBD'|TYPE=='AOI')
+
+mca_cod_union <- st_union(mca_cod)
+
+over_cod=ggplot() + geom_sf(data=high_bv_cod_0.1, fill='gray65', color=NA) +
+  geom_sf(data=mca_cod_union, fill=NA) + labs(title = "Atlantic cod", x="", y="") +
+  geom_sf(data=t_mpa, fill='deepskyblue', color=NA) +
+  geom_sf(data=t_oecm, fill='darkorchid1', color=NA) +
+  geom_sf(data=t_draft, fill='darkolivegreen3', color=NA) +
+  theme_classic() + geom_sf(data=atl_coast) + xlim(c(-70, -55)) + ylim(c(40, 48))
+
+#plaice
+high_bycatch_plaice <- st_intersection(high_bv_plaice_0.1, mca)
+mca_plaice <- subset(mca_fit, mca_fit$NAME=="St Anns Bank Marine Protected Area"|
+                       mca_fit$NAME=="Eastern Shoal"|
+                       mca_fit$NAME=="Georges Bank"|
+                       mca_fit$NAME=="Misaine Bank and Laurentian Channel"|
+                       mca_fit$NAME=="Middle Bank-Canso Bank"|
+                       mca_fit$NAME=="Canso Ledges - Sugar Harbour Islands"|
+                       mca_fit$NAME=="Eastern Canyons Marine Refuge")
+head(mca_plaice)
+high_bv_cod_total <- st_area(high_bv_cod_0.1) #Total area (top x%)
+high_bv_cod_total <- sum(high_bv_cod_total)
+
+#Total area of high BV inside MCA's
+bv_plaice_mca = sum(st_area(high_bycatch_plaice))
+
+plaice_area_mca <- st_area(mca_plaice) #Total area within MCA
+plaice_area_mca = sum(plaice_area_mca)
+
+sf_use_s2(FALSE)
+high_bv_mpa <- sum(st_area(subset(high_bycatch_plaice, TYPE=="MPA")))
+high_bv_oem <- sum(st_area(subset(high_bycatch_plaice, TYPE=="OEM")))
+high_bv_tbd <- sum(st_area(subset(high_bycatch_plaice, TYPE=="TBD"| TYPE=="AOI")))
+
+
+t_mpa <- subset(mca_plaice, TYPE=='MPA')
+t_oecm <- subset(mca_plaice, TYPE=='OEM')
+t_draft <- subset(mca_plaice, TYPE=='TBD'|TYPE=='AOI')
+
+mca_cod_union <- st_union(mca_plaice)
+
+over_plaice=ggplot() + geom_sf(data=high_bv_plaice_0.1, fill='gray65', color=NA) +
+  geom_sf(data=mca_plaice_union, fill=NA) + labs(title = "American plaice", x="", y="") +
+  geom_sf(data=t_mpa, fill='deepskyblue', color=NA) +
+  geom_sf(data=t_oecm, fill='darkorchid1', color=NA) +
+  geom_sf(data=t_draft, fill='darkolivegreen3', color=NA) +
+  theme_classic() + geom_sf(data=atl_coast) + xlim(c(-70, -55)) + ylim(c(40, 48))
+
+#hake
+high_bycatch_hake <- st_intersection(high_bv_hake_0.1, mca)
+mca_hake <- subset(mca_fit, mca_fit$NAME=="Misaine Bank and Laurentian Channel"|
+                     mca_fit$NAME=="Eastern Shore Islands"|
+                     mca_fit$NAME=="Sable Island Bank"|
+                     mca_fit$NAME=="Emerald Basin Sponge Conservation Area"|
+                     mca_fit$NAME=="Fundian Channel-Browns Bank"|
+                     mca_fit$NAME=="Sambro Ledges - Prospect"|
+                     mca_fit$NAME=="Western Jordan Basin"|
+                     mca_fit$NAME=="Central Scotian Slope, Rise and Abyss"|
+                     mca_fit$NAME=="Chebogue"|
+                     mca_fit$NAME=="LaHave Basin"|
+                     mca_fit$NAME=="Western Emerald Bank Conservation Area"|
+                     mca_fit$NAME=="North of Emerald Basin Sea Pen Field"|
+                     mca_fit$NAME=="Pearl Island"|
+                     mca_fit$NAME=="LaHave Islands"|
+                     mca_fit$NAME=="Northern Gulf of Maine"|
+                     mca_fit$NAME=="Jordan Basin Conservation Area"|
+                     mca_fit$NAME=="Brier Island")
+head(mca_hake)
+#Calculate Area
+high_bv_hake_total <- st_area(high_bv_hake_0.1) #Total area (top x%)
+high_bv_hake_total <- sum(high_bv_hake_total)
+
+#Total area of high bv inside MCA's
+bv_hake_mca = sum(st_area(high_bycatch_hake))
+
+hake_area_mca <- st_area(mca_hake) #Total area within MCA
+hake_area_mca = sum(hake_area_mca)
+
+sf_use_s2(FALSE)
+high_bv_mpa <- sum(st_area(subset(high_bycatch_hake, TYPE=="MPA")))
+high_bv_oem <- sum(st_area(subset(high_bycatch_hake, TYPE=="OEM")))
+high_bv_tbd <- sum(st_area(subset(high_bycatch_hake, TYPE=="TBD"| TYPE=="AOI")))
+
+mca_hake_union <- st_union(mca_hake)
+
+over_hake=ggplot() + geom_sf(data=high_bv_hake_0.1, fill='gray65', color=NA) +
+  geom_sf(data=mca_hake_union, fill=NA) + labs(title = "White hake", x="", y="") +
+  geom_sf(data=t_mpa, fill='deepskyblue', color=NA) +
+  geom_sf(data=t_oecm, fill='darkorchid1', color=NA) +
+  geom_sf(data=t_draft, fill='darkolivegreen3', color=NA) +
+  theme_classic() + geom_sf(data=atl_coast) + xlim(c(-70, -55)) + ylim(c(40, 48))
+over_hake
+
+
+#Combined
+high_bycatch_all <- st_intersection(high_bv_all_0.1, mca)
+mca_all <- subset(mca_fit, mca_fit$NAME=="Corsair/Georges Canyons Conservation Area"|
+                    mca_fit$NAME=="Jordan Basin Conservation Area"|
+                    mca_fit$NAME=="Western Emerald Bank Conservation Area"|
+                    mca_fit$NAME=="Northeast Channel Coral Conservation Area"|
+                    mca_fit$NAME== "Eastern Shoal"|
+                    mca_fit$NAME=="Roseway Bank"|
+                    mca_fit$NAME=="Middle Bank-Canso Bank"|
+                    mca_fit$NAME=="Western Jordan Basin"|
+                    mca_fit$NAME=="Point Michaud and Basque Islands"|
+                    mca_fit$NAME=="Canso Ledges - Sugar Harbour Islands"|
+                    mca_fit$NAME=="Bon Portage Island"|
+                    mca_fit$NAME=="South Grand Manan"|
+                    mca_fit$NAME=="Brier Island"|
+                    mca_fit$NAME=="Long Eddy"|
+                    mca_fit$NAME=="Fundian Channel-Browns Bank"|
+                    mca_fit$NAME=="Eastern Canyons Marine Refuge")
+head(mca_all)
+
+#Calculate Area
+high_BR_all_total <- st_area(high_BR_all_0.1) #Total area (top x%)
+high_BR_all_total <- sum(high_BR_all_total)
+
+#Total area of high BR inside MCA's
+BR_all_mca = sum(st_area(high_bycatch_all))
+
+all_area_mca <- st_area(mca_all) #Total area within MCA
+all_area_mca = sum(all_area_mca)
+
+sf_use_s2(FALSE)
+high_BR_mpa <- sum(st_area(subset(high_bycatch_all, TYPE=="MPA")))
+high_BR_oem <- sum(st_area(subset(high_bycatch_all, TYPE=="OEM")))
+high_BR_tbd <- sum(st_area(subset(high_bycatch_all, TYPE=="TBD"| TYPE=="AOI")))
+
+
+mca_all_union <- st_union(mca_all)
+
+over_all=ggplot() + geom_sf(data=high_bv_all_0.1, fill='gray65', color=NA) +
+  geom_sf(data=mca_all_union, fill=NA) + labs(title = "Combined", x="", y="") +
+  geom_sf(data=t_mpa, fill='deepskyblue', color=NA) +
+  geom_sf(data=t_oecm, fill='darkorchid1', color=NA) +
+  geom_sf(data=t_draft, fill='darkolivegreen3', color=NA) +
+  theme_classic() + geom_sf(data=atl_coast) + xlim(c(-70, -55)) + ylim(c(40, 48))
+over_all
+
+####MCA ANALYSIS - FIGURE 8####
+#Atl.cod
+Mean_BV_cod <- st_intersection(bv_cod, mca)
+Mean_BV_cod <- aggregate(Mean_BV_cod[, 1], list(Mean_BV_cod$NAME), mean)
+colnames(Mean_BV_cod) = c("NAME", "Mean.bycatch", "geometry")
+head(Mean_BV_cod)
+
+#Am. plaice
+Mean_BV_plaice <- st_intersection(bv_plaice, mca)
+Mean_BV_plaice <- aggregate(Mean_BV_plaice[, 1], list(Mean_BV_plaice$NAME), mean)
+colnames(Mean_BV_plaice) = c("NAME", "Mean.bycatch", "geometry")
+head(Mean_BV_plaice)
+
+#W.hake
+Mean_BV_hake <- st_intersection(bv_hake, mca)
+Mean_BV_hake <- aggregate(Mean_BV_hake[, 1], list(Mean_BV_hake$NAME), mean)
+colnames(Mean_BV_hake) = c("NAME", "Mean.bycatch", "geometry")
+head(Mean_BV_hake)
+
+#Combined
+Mean_BV_all <- st_intersection(bv_all, mca)
+Mean_BV_all <- aggregate(Mean_BV_all[, 1], list(Mean_BV_all$NAME), mean)
+colnames(Mean_BV_all) = c("NAME", "Mean.bycatch", "geometry")
+head(Mean_BV_all)
+
+#Plot
+avg_mca_cod <- ggplot(atl_coast)+
+  geom_sf() + theme_classic()+
+  geom_sf(data=avg_mca_dat, aes(fill=acmean))+
+  scale_fill_viridis(option="H") + annotation_scale(width_hint=0.1) +
+  labs(x='lon', y='lat', fill='Vulnerability', title='Atlantic cod')
+avg_mca_cod
+
+#Plaice
+avg_mca_amer <- ggplot(atl_coast)+
+  geom_sf() + theme_classic()+
+  geom_sf(data=avg_mca_dat, aes(fill=ammean))+
+  scale_fill_viridis(option="H") + annotation_scale(width_hint=0.1) +
+  labs(x='lon', y='lat', fill='Vulnerability', title='American plaice')
+avg_mca_amer
+
+#Hake
+avg_mca_hake <- ggplot(atl_coast)+
+  geom_sf() + theme_classic()+
+  geom_sf(data=avg_mca_dat, aes(fill=whmean))+
+  scale_fill_viridis(option="H") + annotation_scale(width_hint=0.1) +
+  labs(x='lon', y='lat', fill='Vulnerability', title='White hake')
+avg_mca_hake
+
+#Combined
+avg_mca_all <- ggplot(atl_coast)+
+  geom_sf() + theme_classic()+
+  geom_sf(data=avg_mca_dat, aes(fill=grmean))+
+  scale_fill_viridis(option="H") + annotation_scale(width_hint=0.1) +
+  labs(x='lon', y='lat', fill='Vulnerability', title='Combined')
+avg_mca_all
+
+grid.arrange(avg_mca_amer, avg_mca_cod, avg_mca_hake, avg_mca_all, ncol=2)
+
+
+
+
+
+
+
+
+
+
