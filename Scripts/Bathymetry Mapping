@@ -1,0 +1,73 @@
+####BATHYMETRY MAPPING - FIGURE 2####
+#Load coastal data
+map_data <- rnaturalearth::ne_countries(
+  scale = "large",
+  returnclass = "sf", country = c("canada", "United States of America"))
+
+atl_coast <-
+  sf::st_crop(map_data, c(xmin = -70, ymin = 40, xmax = -55, ymax = 48))
+
+#Import NAFO divisions
+#Download 
+##https://www.nafo.int/Data/GIS
+nafo_zones=read_sf("/Users/matthewdurant/Desktop/Honours/Divisions/NAFO_Divisions_SHP/NAFO_Divisions_2021_poly_clipped.shp")
+head(nafo_zones)
+plot(nafo_zones)
+st_crs(nafo_zones) = 4269
+#Subset for SS-Bof
+nafo_zones <- subset(nafo_zones, Division=="4V"|Division=="4W"|Division=="4X"|SubSubDiv=="5Zc")
+nafo_union <- st_union(nafo_zones)
+
+ggplot() + geom_sf(data=atl_coast, fill='lightgrey') + xlim(-70,-55) + ylim(40,48) +
+  geom_sf(data=nafo_zones, fill=NA) + labs(x="lon",y='lat') +
+  theme_classic() + annotation_scale(width_hint=0.1)
+
+ggplot() + geom_sf(data=atl_coast, fill='lightgrey') + xlim(-70,-55) + ylim(40,48) +
+  geom_sf(data=nafo_union, fill=NA) + labs(x="lon",y='lat') +
+  theme_classic() + annotation_scale(width_hint=0.1)
+
+#Download
+#https://www.ngdc.noaa.gov/mgg/global/relief/ETOPO1/data/bedrock/cell_registered/netcdf/
+
+r1=raster("/Users/matthewdurant/Downloads/ETOPO1_Bed_c_gdal.grd")
+extent=extent(-70,-55,40,48)
+bathy=crop(r1,extent)
+bathy
+
+plot(bathy)
+
+bathy.df = as.data.frame(bathy, xy=T)
+bathy_sf <- st_as_sf(bathy.df, coords = c("x", "y"), crs=4269, remove=F)
+
+##subset to remove land and transform back to raster
+bathy.df = subset(bathy.df, layer<0)
+bathy = rasterFromXYZ(bathy.df)
+plot(bathy)
+bathy = bathy*(-1)
+
+bathy_0_100 <- subset(bathy.df, layer>=0 & layer<100)
+bathy_100_200 <- subset(bathy.df, layer>=100 & layer<200)
+bathy_200_1000 <- subset(bathy.df, layer>=200 & layer<1000)
+bathy_200_500 <- subset(bathy.df, layer>=200 & layer<500)
+bathy_500_1000 <- subset(bathy.df, layer>=500 & layer<1000)
+bathy_1000_2000 <-subset(bathy.df, layer>=1000 & layer<2000)
+bathy_2000_3000 <- subset(bathy.df, layer>=2000 & layer<3000)
+bathy_3000_6000 <- subset(bathy.df, layer>=3000 & layer<6000)
+
+#Assign numerical value to layer
+bathy_0_100$layer <- rep(1, nrow(bathy_0_100))
+bathy_100_200$layer <- rep(2, nrow(bathy_100_200))
+bathy_200_1000$layer <- rep(3, nrow(bathy_200_1000))
+bathy_1000_2000$layer <- rep(4, nrow(bathy_1000_2000))
+bathy_2000_3000$layer <- rep(5, nrow(bathy_2000_3000))
+bathy_3000_6000$layer <- rep(6, nrow(bathy_3000_6000))
+
+#plot bathymetry over SS-BoF (Unlabelled)
+ggplot(bathy_0_100) + geom_tile(aes(x=x, y=y), fill='azure1', colour='azure1') +
+  geom_tile(data=bathy_100_200, aes(x=x, y=y), fill = 'lightblue1', colour='lightblue1') +
+  geom_tile(data=bathy_200_1000, aes(x=x, y=y), fill = 'lightskyblue3', colour='lightskyblue3') +
+  geom_tile(data=bathy_1000_2000, aes(x=x, y=y), fill = 'lightskyblue4', colour='lightskyblue4') +
+  geom_sf(data=atl_coast, fill='lightgrey') + xlim(-70,-55) + ylim(40,48) +
+  geom_sf(data=shelf_union, fill=NA) + labs(x="lon",y='lat') +
+  theme_classic() + annotation_scale(width_hint=0.1)
+
