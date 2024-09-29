@@ -1,0 +1,23 @@
+mymap=read_sf("/Users/matthewdurant/Desktop/honours/MPA/networksites_proposed_OEM_MPA_20220617.shp")
+str(mymap)
+mymap <- st_transform(mymap, 4269)
+#Remove areas outside of study area (Canadian EEZ)
+mymap <- mymap[-c(1,3,19,43),]
+
+mpa <- subset(mymap, TYPE=="MPA")
+draft <- subset(mymap, TYPE=="TBD")
+aoi <- subset(mymap, TYPE=="AOI")
+oecm <- subset(mymap, TYPE=="OEM")
+
+shelf_union <- st_union(mymap)
+css <- subset(mymap, NAME=="Central Scotian Slope, Rise and Abyss")
+
+ggplot(mpa) + 
+  geom_sf(fill='deepskyblue') + theme_classic()+
+  geom_sf(data=oecm, fill='darkorchid1') +
+  geom_sf(data=TBD, fill='darkolivegreen3') +
+  geom_sf(data = aoi, fill='brown1') + geom_sf(data=css, fill='darkolivegreen3') + 
+  geom_sf(data=atl_coast) +
+  geom_sf(data=nafo_union, fill=NA) +
+  annotation_scale(width_hint=0.1) + xlim(c(-70, -55)) + ylim(c(40, 48)) +
+  labs(x='lon',y='lat')
